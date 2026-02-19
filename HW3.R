@@ -110,7 +110,64 @@ ggplot(data = NorthA, # data for plot
        aes(x = Year, y=Annual.CO2.emissions..zero.filled., color=Entity ) )+ # aes, x and y
   geom_point()+ # make points at data point
   geom_line()+ # use lines to connect data points
-  labs(x="Year", y="US fossil fuel emissions (tons CO2)")+ # make axis labels
+  labs(x="Year", y="Fossil Fuel Emissions (tons CO2)")+ # make axis labels
   theme_classic()
 
 #HW3 Start----
+# Question 1: Graph emissions from any countries----
+
+countries = datCO2[datCO2$Entity == "Argentina" | datCO2$Entity == "Australia" | 
+                     datCO2$Entity == "Norway" | datCO2$Entity == "Canada", ]
+
+ggplot(data = countries, # data for plot
+       aes(x = Year, y=Annual.CO2.emissions..zero.filled., color=Entity ) )+ # aes, x and y
+  geom_point()+ # make points at data point
+  geom_line()+ # use lines to connect data points
+  labs(x="Year", y="Fossil Fuel Emissions (tons CO2)")+ # make axis labels
+  theme_classic()
+
+#Question 2: Graph the change in world air temperatures and CO emissions----
+
+#Global CO2 over time----
+avgyear = datCO2 %>%
+  group_by(Year) %>%
+  summarize(total_CO2 = sum(Annual.CO2.emissions..zero.filled.))
+
+ggplot(data = avgyear,aes(x = Year, y=total_CO2) )+
+  #geom_point(color = "blue")+ 
+  geom_line(color = "blue", linewidth = 1)+ 
+  labs(x="Year", y="Fossil Fuel Emissions (tons CO2)", title= "Global CO2 Emissions Over Time")+
+  theme_classic()+
+  theme(plot.title = element_text(hjust = 0.5)) #Google to help me center this
+
+# Global temperature anamoly over time----
+
+avgtempanom = tempAnom %>%
+  group_by(date) %>%
+  summarize(total_anom = sum(temperature_anomaly))
+
+ggplot (data = avgtempanom, aes(x = date, y=total_anom)) +
+  #geom_point(color = "coral1")+ 
+  geom_line(color = "coral1")+
+  geom_hline(yintercept = 0, color = "gray", linetype = "dashed", size = 1)+ #Used google for help on this
+  labs(x="Year", y="Global Temperature Anomaly", title = "World Air Temperature Anomalies Over Time")+
+  theme_classic()+
+  theme(plot.title = element_text(hjust = 0.5))
+  
+#Question 3: 
+
+glacier_mass = read.csv("/cloud/project/climate-change-change-of-mass-of-us-glaciers.csv")
+
+glaciers = glacier_mass[glacier_mass$Entity == "Wolverine Glacier" | 
+                         glacier_mass$Entity == "South Cascade Glacier" | 
+                         glacier_mass$Entity == "Lemon Creek Glacier" |
+                         glacier_mass$Entity == "Gulkana Glacier", ]
+
+ggplot(data = glaciers, aes(x = Year, y=Cumulative.mass.balance, color=Entity)) +
+         #geom_point(color = "coral1")+ 
+         geom_line()+
+         labs(x="Year", y="Change in Meters", title = "Change of Mass of US Glaciers")+
+         theme_classic()+
+         theme(plot.title = element_text(hjust = 0.5))
+
+
