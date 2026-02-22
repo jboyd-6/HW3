@@ -120,18 +120,19 @@ countries = datCO2[datCO2$Entity == "Argentina" | datCO2$Entity == "Australia" |
                      datCO2$Entity == "Norway" | datCO2$Entity == "Canada", ]
 
 ggplot(data = countries, # data for plot
-       aes(x = Year, y=Annual.CO2.emissions..zero.filled., color=Entity ) )+ # aes, x and y
-  geom_point()+ # make points at data point
-  geom_line()+ # use lines to connect data points
-  labs(x="Year", y="Fossil Fuel Emissions (tons CO2)")+ # make axis labels
-  theme_classic()
+       aes(x = Year, y=CO2, color=Entity) )+ # aes, x and y
+  #geom_point()+ # make points at data point
+  geom_line(alpha = 0.5)+ # use lines to connect data points
+  labs(x="Year", y="Fossil Fuel Emissions (tons CO2)", title="CO2 Emission by Country Over Time")+ # make axis labels
+  theme_classic() + 
+  theme(plot.title = element_text(hjust = 0.5))#Used google to help me center the title
 
 #Question 2: Graph the change in world air temperatures and CO emissions----
 
 #Global CO2 over time----
 avgyear = datCO2 %>%
   group_by(Year) %>%
-  summarize(total_CO2 = sum(Annual.CO2.emissions..zero.filled.))
+  summarize(total_CO2 = sum(CO2))
 
 ggplot(data = avgyear,aes(x = Year, y=total_CO2) )+
   #geom_point(color = "blue")+ 
@@ -153,7 +154,7 @@ ggplot (data = avgtempanom, aes(x = date, y=total_anom)) +
   labs(x="Year", y="Global Temperature Anomaly", title = "World Air Temperature Anomalies Over Time")+
   theme_classic()+
   theme(plot.title = element_text(hjust = 0.5))
-  
+
 #Question 3: 
 
 glacier_mass = read.csv("/cloud/project/climate-change-change-of-mass-of-us-glaciers.csv")
@@ -165,7 +166,7 @@ glaciers = glacier_mass[glacier_mass$Entity == "Wolverine Glacier" |
 
 ggplot(data = glaciers, aes(x = Year, y=Cumulative.mass.balance, color=Entity)) +
          #geom_point(color = "coral1")+ 
-         geom_line()+
+         geom_line(alpha = 0.5)+
          labs(x="Year", y="Change in Meters", title = "Change of Mass of US Glaciers")+
          theme_classic()+
          theme(plot.title = element_text(hjust = 0.5))
