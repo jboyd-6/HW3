@@ -10,6 +10,7 @@ library(lubridate)
 
 
 datCO2 = read.csv("/cloud/project/annual-co-emissions-by-region.csv")
+datCO2$CO2ppm = (datCO2$Annual.CO2.emissions..zero.filled./1000000)
 
 # check column names
 colnames(datCO2)
@@ -37,7 +38,7 @@ plot(US$Year, US$CO2,
      type="b",
      pch=19,
      xlab= "Year",
-     ylab= "Fossil Fuel emissions(billions of tons of CO2",
+     ylab= "Fossil Fuel emissions(billions of tons of CO2)",
      yaxt="n")
 axis(2, seq(0, 6000000000, by=2000000000), seq(0,6, by=2), las=2)
 
@@ -46,16 +47,13 @@ axis(2, seq(0, 6000000000, by=2000000000), seq(0,6, by=2), las=2)
 
 ggplot(US, aes(x=Year, y=CO2))+ geom_point()+
   geom_line()+
-  labs(x="Year", y="US fossil fuel CO2 emissions (tons CO2)")+
+  labs(x="Year", y=("US fossil fuel CO2 emissions (tons CO2)"))+
   theme_classic()
 
 NorthA = datCO2 %>%
-  filter(Entity == "United States" |
-           Entity == "Mexico" |
-           Entity == "Canada")
+  filter(Entity == "United States" | Entity == "Mexico" | Entity == "Canada")
 
-ggplot(NorthA,
-       aes(x=Year, y=CO2, color=Entity))+
+ggplot(NorthA, aes(x=Year, y=CO2, color=Entity))+
   geom_point()+
   geom_line()+
   scale_color_manual(values=c("red", "royalblue", "darkgoldenrod3"))
@@ -74,7 +72,7 @@ NH = tempAnom %>%
 SH = tempAnom %>%
   filter(Entity == "Southern Hemisphere")
 
-plot(tempAnom$date,tempAnom$temperature_anomaly) %>%
+plot(tempAnom$date,tempAnom$temperature_anomaly)
 
 plot(NH$date,NH$temperature_anomaly,
   pch = 20,
@@ -107,7 +105,7 @@ NorthA <- datCO2[datCO2$Entity == "United States" |
                    datCO2$Entity == "Mexico", ]
 
 ggplot(data = NorthA, # data for plot
-       aes(x = Year, y=Annual.CO2.emissions..zero.filled., color=Entity ) )+ # aes, x and y
+       aes(x = Year, y=CO2, color=Entity ) )+ # aes, x and y
   geom_point()+ # make points at data point
   geom_line()+ # use lines to connect data points
   labs(x="Year", y="Fossil Fuel Emissions (tons CO2)")+ # make axis labels
@@ -120,10 +118,10 @@ countries = datCO2[datCO2$Entity == "Argentina" | datCO2$Entity == "Australia" |
                      datCO2$Entity == "Norway" | datCO2$Entity == "Canada", ]
 
 ggplot(data = countries, # data for plot
-       aes(x = Year, y=CO2, color=Entity) )+ # aes, x and y
+       aes(x = Year, y=CO2ppm, color=Entity) )+ # aes, x and y
   #geom_point()+ # make points at data point
   geom_line(alpha = 0.5)+ # use lines to connect data points
-  labs(x="Year", y="Fossil Fuel Emissions (tons CO2)", title="CO2 Emission by Country Over Time")+ # make axis labels
+  labs(x="Year", y="Tons of CO2 by Millions", title="CO2 Emission by Country Over Time")+ # make axis labels
   theme_classic() + 
   theme(plot.title = element_text(hjust = 0.5))#Used google to help me center the title
 
@@ -132,12 +130,12 @@ ggplot(data = countries, # data for plot
 #Global CO2 over time----
 avgyear = datCO2 %>%
   group_by(Year) %>%
-  summarize(total_CO2 = sum(CO2))
+  summarize(total_CO2 = sum(CO2/1000000000))
 
-ggplot(data = avgyear,aes(x = Year, y=total_CO2) )+
+ggplot(data = avgyear,aes(x = Year, y= total_CO2) )+
   #geom_point(color = "blue")+ 
   geom_line(color = "blue", linewidth = 1)+ 
-  labs(x="Year", y="Fossil Fuel Emissions (tons CO2)", title= "Global CO2 Emissions Over Time")+
+  labs(x="Year", y="Tons of CO2 emission by billion", title= "Global CO2 Emissions Over Time")+
   theme_classic()+
   theme(plot.title = element_text(hjust = 0.5)) #Google to help me center this
 
